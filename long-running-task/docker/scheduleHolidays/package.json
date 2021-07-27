@@ -10,8 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lastorder/lastorder-application-plugin-rds": "^1.0.6",
+    "@lastorder/lastorder-application-plugin-lambda": "0.0.1",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
+    "moment-timezone": "^0.5.26",
     "mysql2": "^1.6.5",
     "sequelize": "^6.3.5",
     "elastic-apm-node": "^3.13.0"
