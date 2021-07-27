@@ -13,10 +13,8 @@ elasticapm.startAPM({
 })
 
 const main = async () => {
-    console.log('Running shceduleHolidays')
-
+    console.log('Running scheduleHolidays')
     await elasticapm.captureAPM('holidays.scheduleHolidays', async (apm) => {
-
         await common.wrapAPM(async() =>{
             return holiday.scheduleHolidays()
         }, `scheduleHolidays-${STAGE}`)()

@@ -1,10 +1,9 @@
 const mysql = require('mysql2/promise')
 
-
 const getConnection = async function() {
     let conn = null
     let error = null
-    for (let try_count = 1; try_count <= CONNECTION_RETRY_COUNT; try_count++) {
+    for (let try_count = 1; try_count <= 3; try_count++) {
         try {
             conn = await mysql.createConnection({
                 host: process.env.RDS_HOSTNAME,
