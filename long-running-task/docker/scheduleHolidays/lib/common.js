@@ -30,7 +30,7 @@ const getConnection = async function() {
 }
 
 /**
- * lastorder APM 리포팅을 하는 함수로 wrapping한다.
+ *
  * @param {*} fnc
  * @param {*} name
  */
