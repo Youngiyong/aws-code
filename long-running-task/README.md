@@ -13,3 +13,6 @@ aws lambda 사용시 발생하는 문제인, lambda 실행시간에 대한 테�
 
   * lambda로 들어온 호출에 대해서, ecs task를 실행하는 것을 만들어 봅니다.
   * ecs로 구동되는 애플리케이션에 x-ray 및 elasticapm을 적용해 봅니다.
+
+
+https://www.notion.so/AWS-Study-1be12bc353f54e3cb0d1b398f44ef75e
