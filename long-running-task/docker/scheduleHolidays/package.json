@@ -1,0 +1,17 @@
+{
+  "name": "long-running-task",
+  "version": "1.0.0",
+  "description": "aws lambda 사용시 발생하는 문제인, lambda 실행시간에 대한 테스트를 수행합니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "mysql2": "^1.6.5",
+    "elastic-apm-node": "^3.13.0"
+  }
+}
