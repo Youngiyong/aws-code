@@ -4,8 +4,8 @@
     "networkMode": "awsvpc", 
     "containerDefinitions": [
         {
-            "name": "fargate-app", 
-            "image": "219307222257.dkr.ecr.ap-northeast-2.amazonaws.com/scheduler-ecr:latest", 
+            "name": "scheduler-container", 
+            "image": "219307222257.dkr.ecr.ap-northeast-2.amazonaws.com/scheduler:latest", 
             "essential": true 
         }
     ], 

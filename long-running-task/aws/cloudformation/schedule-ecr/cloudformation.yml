@@ -1,8 +1,0 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: scheduler-ecr
-Resources:
-
-  EcrRepositoryPointExpirationNoti:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: lastorder/scheduler-scheduleholiday

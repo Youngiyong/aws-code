@@ -1,18 +1,17 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: scheduler-scheduleholiday-dev
+Description: scheduler-cluster
 Parameters:
   ServiceName:
     Type: String
     # update with the name of the service
-    Default: scheduler-scheduleholiday-dev
-  
+    Default: scheduler-holidays-service
+    
   ExecutionRoleArn:
     Type: String
-    Default: arn:aws:iam::299665028667:role/ecsTaskExecutionRole
+    Default: arn:aws:iam::219307222257:role/ecsTaskExecutionRole
   
   # Environment variables
-  Stage:
-    Type: String
+
   RdsDatabase:
     Type: String
   RdsHostname:
@@ -23,25 +22,15 @@ Parameters:
     Type: String
   RdsUsername:
     Type: String
-  RdsReaderHostname:
-    Type: String
-  RdsReaderPort:
-    Type: String
-  BiztalkQueueEndpoint:
-    Type: String
-  DeviceApiBaseUrl:
-    Type: String
   EapmServerUrl:
     Type: String
-  SnsApmArn:
-    Type: String
+
 
 Resources:
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     # Makes sure the log group is created before it is used.
-    DependsOn: LogGroup
     Properties:
       # Name of the task definition. Subsequent versions of the task definition are grouped together under this name.
       Family: !Join ['', [!Ref ServiceName]]
@@ -54,26 +43,24 @@ Resources:
       # 1024 (1 vCPU) - Available memory values: 2GB, 3GB, 4GB, 5GB, 6GB, 7GB, 8GB
       # 2048 (2 vCPU) - Available memory values: Between 4GB and 16GB in 1GB increments
       # 4096 (4 vCPU) - Available memory values: Between 8GB and 30GB in 1GB increments
-      Cpu: 512
+      Cpu: 256
       # 0.5GB, 1GB, 2GB - Available cpu values: 256 (.25 vCPU)
       # 1GB, 2GB, 3GB, 4GB - Available cpu values: 512 (.5 vCPU)
       # 2GB, 3GB, 4GB, 5GB, 6GB, 7GB, 8GB - Available cpu values: 1024 (1 vCPU)
       # Between 4GB and 16GB in 1GB increments - Available cpu values: 2048 (2 vCPU)
       # Between 8GB and 30GB in 1GB increments - Available cpu values: 4096 (4 vCPU)
-      Memory: 4GB
+      Memory: 0.5GB
       # A role needed by ECS.
       # "The ARN of the task execution role that containers in this task can assume. All containers in this task are granted the permissions that are specified in this role."
       # "There is an optional task execution IAM role that you can specify with Fargate to allow your Fargate tasks to make API calls to Amazon ECR."
       ExecutionRoleArn: !Ref ExecutionRoleArn
-      # "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that grants containers in the task permission to call AWS APIs on your behalf."
       TaskRoleArn: !Ref TaskRole
+      # "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that grants containers in the task permission to call AWS APIs on your behalf."
       ContainerDefinitions:
         - Name: !Ref ServiceName
-          Image: !Join ['', [!Ref "AWS::AccountId", .dkr.ecr.ap-northeast-2.amazonaws.com/lastorder/scheduler-scheduleholiday:latest]]
+          Image: 219307222257.dkr.ecr.ap-northeast-2.amazonaws.com/scheduler:latest
 
           Environment:
-            - Name: STAGE
-              Value: !Ref Stage
             - Name: RDS_DATABASE
               Value: !Ref RdsDatabase
             - Name: RDS_HOSTNAME
@@ -84,26 +71,9 @@ Resources:
               Value: !Ref RdsPort
             - Name: RDS_USERNAME
               Value: !Ref RdsUsername
-            - Name: RDS_READER_HOSTNAME
-              Value: !Ref RdsReaderHostname
-            - Name: RDS_READER_PORT
-              Value: !Ref RdsReaderPort
-            - Name: BIZTALK_QUEUE_ENDPOINT
-              Value: !Ref BiztalkQueueEndpoint
-            - Name: DEVICE_API_BASE_URL
-              Value: !Ref DeviceApiBaseUrl
             - Name: EAPM_SERVER_URL
               Value: !Ref EapmServerUrl
-            - Name: SNS_APM_ARN
-              Value: !Ref SnsApmArn
 
-          # Send logs to CloudWatch Logs
-          LogConfiguration:
-            LogDriver: awslogs
-            Options:
-              awslogs-region: !Ref AWS::Region
-              awslogs-group: !Ref LogGroup
-              awslogs-stream-prefix: ecs
   
   # A role for the containers
   TaskRole:
@@ -116,8 +86,7 @@ Resources:
             Principal:
               Service: ecs-tasks.amazonaws.com
             Action: 'sts:AssumeRole'
-      # ManagedPolicyArns:
-      #   - !Ref TaskRolePolicy
+
   TaskRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -135,8 +104,7 @@ Resources:
             Action: 
             - sqs:*
             Resource: "*"
-
-  LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Join ['', [/aws/ecs/, !Ref ServiceName]]
+          - Effect: Allow
+            Action:
+            - ecr:*
+            Resource: "*"

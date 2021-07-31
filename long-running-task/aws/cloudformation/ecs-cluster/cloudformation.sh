@@ -1,7 +1,8 @@
 #!/bin/bash
 
 aws cloudformation \
+--profile test01 \
 deploy \
 --template-file cloudformation.yml \
---stack-name lastorder-scheduler-ecr \
+--stack-name scheduler-cluster \
 --capabilities CAPABILITY_NAMED_IAM

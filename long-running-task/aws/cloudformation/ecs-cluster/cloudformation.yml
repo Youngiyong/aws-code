@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: scheduler-cluster
+
+Resources:
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: scheduler-cluster
