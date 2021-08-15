@@ -1,19 +1,30 @@
 import { Handler, Context } from "aws-lambda";
 
-interface HelloResponse {
+interface Response {
   statusCode: number;
   body: string;
 }
 
-const hello: Handler = async (event: any, context: Context) => {
-  const response: HelloResponse = {
+const sns: Handler = async (event: any, context: Context) => {
+  const response: Response = {
     statusCode: 200,
     body: JSON.stringify({
-      message: "Hello World!"
+      message: "Hello SNS!"
+    })
+  };
+  return response;
+};
+
+const sqs: Handler = async (event: any, context: Context) => {
+  const response: Response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: "Hello SQS!"
     })
   };
   return response;
 };
 
 
-export { hello };
+
+export { sns, sqs };
