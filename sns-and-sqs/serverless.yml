@@ -1,18 +1,74 @@
-service: serverless-typescript
+service: serverless-sns-sqs
+# env 파일 사용
+# https://www.serverless.com/framework/docs/environment-variables/
+useDotenv: true
+
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
+  # https://www.serverless.com/plugins/serverless-jest-plugin
+  - serverless-jest-plugin
+  # - serverless-plugin-dynamodb-autoscaling
 
+
+custom:
+  # service application 내 전역적으로 사용하는 서비스 네임, 기본 리소스명이기도 함
+  SERVICE_NAME: ${self:service}-${self:provider.stage}
+  
 provider:
   name: aws
-  runtime: nodejs10.x
-  stage: dev
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ap-northeast-2
+  timeout: 30 # optional, in seconds, default is 6
+  lambdaHashingVersion: 20201221
   region: ap-northeast-2
 
+  iam:
+    role:
+      name: ${self:custom.SERVICE_NAME}
+      # path:
+      statements:
+        - Effect: Allow
+          Action:
+            - "sns:*"
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - "s3:*"
+          Resource: "*"
+        # api.doc will call apigateway api
+        - Effect: Allow
+          Action:
+            - "apigateway:*"
+          Resource: "*"
+    environment:
+      # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+      # 기본 : 배포설정, argements 로 입력
+      STAGE: ${self:provider.stage}
+      # 기본 : labda 타임존 설정
+      TZ: "Asia/Seoul"
 functions:
-  hello:
-    handler: src/handler.hello
+  lambdaSNS:
+    handler: src/handler.sns
     events:
       - http:
-          path: hello
+          path: /sns
+          description: "Lambda SNS Test"
           method: get
+          cors:
+            origin: "*"
+            headers: "*"
+          private: false
+    lambdaSQS:
+    handler: src/handler.sns
+    events:
+      - http:
+          path: /sqs
+          description: "Lambda SQS Test"
+          method: get
+          cors:
+            origin: "*"
+            headers: "*"
+          
