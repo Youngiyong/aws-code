@@ -4,21 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "invoke": "time DEBUG='*' sls invoke local -f $FUNC -p payload/$FUNC.json",
+    "build": "time DEBUG='*' tsc",
+    "test": "time DEBUG='*' sls package --stage dev && sls invoke test",
+    "deploy": "time DEBUG='*' ./run.deploy.sh",
+    "deploy:prod": "time DEBUG='*' ./run.deploy.sh prod 1> /etc/null",
+    "remove": "time DEBUG='*' ./run.remove.sh",
+    "remove:prod": "time DEBUG='*' ./run.remove.sh prod"
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "aws-lambda": "^1.0.6",
+    "axios": "^0.21.1",
+    "dayjs": "^1.10.5",
+    "path": "^0.12.7"
+  },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.37",
-    "@types/chai": "^4.2.6",
-    "@types/mocha": "^5.2.7",
-    "@types/request": "^2.48.3",
+    "@serverless/typescript": "^2.30.3",
+    "@types/serverless": "^1.78.32",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "serverless-offline": "^5.12.1",
     "serverless-plugin-typescript": "^1.1.9",
     "tslint": "^5.20.1",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.3"
+    "typescript": "^4.3.5"
   }
 }

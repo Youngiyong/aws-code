@@ -52,25 +52,35 @@ provider:
       STAGE: ${self:provider.stage}
       # 기본 : labda 타임존 설정
       TZ: "Asia/Seoul"
+
+#Reference https://www.serverless.com/framework/docs/providers/aws/events/sns/
 functions:
-  lambdaSNS:
-    handler: src/handler.sns
+  lambdaHook:
+    handler: src/handler.lambdaHook
     events:
       - http:
-          path: /sns
+          path: /lambdahook
           description: "Lambda SNS Test"
           method: get
           cors:
             origin: "*"
             headers: "*"
-  lambdaSQS:
-    handler: src/handler.sqs
+  sns:
+    handler: src/handler.sns
     events:
-      - http:
-          path: /sqs
-          description: "Lambda SQS Test"
-          method: get
-          cors:
-            origin: "*"
-            headers: "*"
-          
+      - sns:
+        arn: !Ref LambdaTopic
+        topicName: LambdaSNSTopic
+        
+  snsEventLambda:
+    handler: src/handler.snsEvent
+
+
+
+# - sns
+resources:
+  Resources:
+    LambdaTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: LambdaSNSTopic
