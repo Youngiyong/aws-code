@@ -1,6 +1,8 @@
-# package directories
 node_modules
-jspm_packages
-
-# Serverless directories
+data
+validates
 .serverless
+yarn.lock
+.git
+.serverless
+.build

@@ -21,7 +21,7 @@ const snsEvent: Handler = async (event: any, context: Context) => {
 
 const sns: Handler = async (event: any, context: Context) => {
   
-  await snsEvent(event, context)
+  return await snsEvent(event, context)
 
 };
 
@@ -36,17 +36,40 @@ const lambdaHook: Handler = async (event: any, context: Context) => {
 	// -------------------------------------------------------------------
 	console.log("lambda Hook Start", event);
 
-  for(var i=0; i<10; i++){
+    await setTimeout(async () =>  {
+       console.log("왜안돼?")
+       console.log("setTimeout", await sns(event, context))
+    }, 3000)
+    
+    console.log("2",await sns(event, context))
 
-    await setTimeout(function() {
-      sns(event, Context)
-        .then((res)=> {
-        console.log("=========================> 1." , res)
-        }).catch((err)=> {
-        console.log("=========================> 2.", err)
-        })
-    }, 30000); //wait 30 second
-  }
+    await setTimeout(function () {
+      console.log("setTimeout2", sns(event, context))
+    }, 3000)
+
+    console.log("4",await sns(event, context))
+  // await setTimeout(async function() {
+  //   for(var i=0; i<10; i++){
+  //     console.log(i)
+  //     let data = null
+  //     await sns(event, Context).then((res)=>{
+  //       console.log(res)
+  //       data=res
+  //     }).catch((err)=> {
+  //       console.log(err)
+  //     })
+  //     console.log(data)
+      // await setTimeout(function() {
+      //   sns(event, Context)
+      //     .then((res)=> {
+      //     console.log("=========================> 1." , res)
+      //     }).catch((err)=> {
+      //     console.log("=========================> 2.", err)
+      //     })
+      // }, 30000); //wait 30 second
+    // }
+  // }, 30000); //wait 30 second
+
 
   console.log("end lambdaHook")
   
