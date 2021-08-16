@@ -74,7 +74,14 @@ functions:
         
   snsEventLambda:
     handler: src/handler.snsEvent
-
+    events:
+      - http:
+          path: /snsEvent
+          description: "Lambda SNS Test"
+          method: get
+          cors:
+            origin: "*"
+            headers: "*"
 
 
 # - sns
