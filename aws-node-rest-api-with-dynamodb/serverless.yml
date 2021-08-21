@@ -1,0 +1,98 @@
+service: myrocompany-issue-relay
+
+frameworkVersion: "2"
+useDotenv: true
+custom:
+  # service application 내 전역적으로 사용하는 서비스 네임, 기본 리소스명이기도 함
+  SERVICE_NAME: ${self:service}-${self:provider.stage}
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'prod'}
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}
+  iam:
+    role:
+      name: ${self:custom.SERVICE_NAME}
+      # path:
+      statements:
+        - Effect: Allow
+          Action:
+            - "dynamodb:*"
+          Resource:
+            - "*"
+functions:
+  create:
+    handler: todos/create.create
+    events:
+      - http:
+          path: todos
+          method: post
+          cors: true
+
+  list:
+    handler: todos/list.list
+    events:
+      - http:
+          path: todos
+          method: get
+          integration: lambda
+          cors:
+            origin: "*"
+            headers: "*"
+          private: false
+
+  get:
+    handler: todos/get.get
+    events:
+      - http:
+          path: todos/{id}
+          method: get
+          integration: lambda
+          cors:
+            origin: "*"
+            headers: "*"
+          private: false
+
+  update:
+    handler: todos/update.update
+    events:
+      - http:
+          path: todos/{id}
+          method: put
+          integration: lambda
+          cors:
+            origin: "*"
+            headers: "*"
+          private: false
+
+  delete:
+    handler: todos/delete.delete
+    events:
+      - http:
+          path: todos/{id}
+          method: delete
+          integration: lambda
+          cors:
+            origin: "*"
+            headers: "*"
+          private: false
+
+resources:
+  Resources:
+    DynamoTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
