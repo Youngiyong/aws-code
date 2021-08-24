@@ -16,38 +16,15 @@ custom:
   # service application 내 전역적으로 사용하는 서비스 네임, 기본 리소스명이기도 함
   SERVICE_NAME: ${self:service}-${self:provider.stage}
   warmup:
-    default:
-     enabled: true # Whether to warm up functions by default or not
-     folderName: '.warmup' # Name of the folder created for the generated warmup 
-     cleanFolder: false
-     memorySize: 256
-     name: warmer-default
-     role: WarmupRole
-     tags:
-      Project: foo
-      Owner: bar 
-     vpc: false
-     events:
-      - schedule: 'cron(0/5 8-17 ? * MON-FRI *)' # Run WarmUp every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
-     package:
-      individually: true
-      exclude: # exclude additional binaries that are included at the serverless package level
-      - ../**
-      - ../../**
-      include:
-      - ./**
-      timeout: 20
-      tracing: true
-      prewarm: true # Run WarmUp immediately after a deploymentlambda
-      clientContext:
-        source: my-custom-source
-        other: '20'
-      payload: 
-        source: my-custom-source
-        other: 20
-      payloadRaw: true # Won't JSON.stringify() the payload, may be necessary for Go/AppSync deployments
-      concurrency: 5 # Warm up 5 concurrent instances
-    
+    enabled: true
+    folderName: '_warmup' # Name of the folder created for the generated warmup 
+    cleanFolder: false
+    memorySize: 256
+    name: 'test-warmup'
+    schedule: 'cron(0/5 0-1 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
+    timeout: 20
+    prewarm: true # Run WarmUp immediately after a deployment
+    concurrency: 1
 provider:
   name: aws
   runtime: nodejs12.x
@@ -78,6 +55,10 @@ provider:
           Action:
             - "apigateway:*"
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - 'lambda:InvokeFunction'
+          Resource: "*"
     environment:
       # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -98,15 +79,15 @@ functions:
           cors:
             origin: "*"
             headers: "*"
+    warmup: true
   sns:
     handler: src/handler.sns
     events:
       - sns:
         arn: !Ref LambdaTopic
         topicName: LambdaSNSTopic  
-    warmup:
-      default:
-        enabled: false
+    warmup: false
+
   snsEventLambda:
     handler: src/handler.snsEvent
     events:
@@ -117,9 +98,7 @@ functions:
           cors:
             origin: "*"
             headers: "*"
-    warmup:
-      default:
-        enabled: false
+    warmup: false
 
 # - sns
 resources:

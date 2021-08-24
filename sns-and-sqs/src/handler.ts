@@ -24,10 +24,14 @@ const sns: Handler = async (event: any, context: Context) => {
 
 
 const lambdaHook: Handler = function(event: any, context: Context){
+  if (event.source === 'serverless-plugin-warmup') {
+    console.log('WarmUP - Lambda is warm!')
+  }
+  
   console.log('hi cold start test')
   setTimeout(async ()=>{
     console.log("setTimeout", await sns(event, context))
-  }, 30000)
+  }, 3000)
 
   console.log("LambadHook The End")
 }
