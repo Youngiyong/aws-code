@@ -8,6 +8,7 @@ interface Response {
 
 
 const snsEvent: Handler = async (event: any, context: Context) => {
+  console.log('hi cold start test')
   setTimeout(async ()=>{
       console.log("setTimeout", await sns(event, context))
   }, 2000)
@@ -16,14 +17,14 @@ const snsEvent: Handler = async (event: any, context: Context) => {
 
 
 const sns: Handler = async (event: any, context: Context) => {
-  
+  console.log('hi cold start test')
   return "SNS 입니다."
 
 };
 
 
 const lambdaHook: Handler = function(event: any, context: Context){
-  
+  console.log('hi cold start test')
   setTimeout(async ()=>{
     console.log("setTimeout", await sns(event, context))
   }, 30000)
