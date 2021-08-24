@@ -16,14 +16,23 @@ custom:
   # service application 내 전역적으로 사용하는 서비스 네임, 기본 리소스명이기도 함
   SERVICE_NAME: ${self:service}-${self:provider.stage}
   warmup:
-    enabled: true
+    default: true
     folderName: '_warmup' # Name of the folder created for the generated warmup 
     cleanFolder: false
     memorySize: 256
-    name: 'test-warmup'
-    schedule: 'cron(0/5 0-1 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
+    name: 'make-them-pop'
+      # role:  myCustRole0
+    schedule: 'cron(0/5 0-23 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
     timeout: 20
     prewarm: true # Run WarmUp immediately after a deployment
+    enabled: true
+    # folderName: '_warmup' # Name of the folder created for the generated warmup 
+    # cleanFolder: false
+    # memorySize: 256
+    # name: 'test-warmup'
+    # schedule: 'cron(0/5 0-23 ? * MON-FRI *)' # Run WarmUP every 5 minutes Mon-Fri between 8:00am and 5:55pm (UTC)
+    # timeout: 20
+    # prewarm: true # Run WarmUp immediately after a deployment
     concurrency: 1
 provider:
   name: aws
@@ -57,7 +66,7 @@ provider:
           Resource: "*"
         - Effect: Allow
           Action:
-            - 'lambda:InvokeFunction'
+            - 'lambda:*'
           Resource: "*"
     environment:
       # https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html
@@ -79,7 +88,9 @@ functions:
           cors:
             origin: "*"
             headers: "*"
-    warmup: true
+    # warmup:
+    #   enabled: prod
+    #   concurrency: 1
   sns:
     handler: src/handler.sns
     events:
