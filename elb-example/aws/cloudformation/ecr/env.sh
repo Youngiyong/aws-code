@@ -1,1 +1,0 @@
-export REPOSITORY_NAME=lastorder/elb-example
