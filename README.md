@@ -1,1 +1,1 @@
-# AWS Code 
+# AWS CloudFormaiton & Shell Script Sample
